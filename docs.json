@@ -16,6 +16,7 @@
           "quickstart",
           "authentication",
           "user-api-access",
+          "rate-limits",
           "errors"
         ]
       },
