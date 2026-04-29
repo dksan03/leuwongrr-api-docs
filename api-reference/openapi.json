@@ -1,0 +1,693 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LeuwongRR User API",
+    "version": "1.0.0",
+    "description": "Dokumentasi publik LeuwongRR User API. API ini hanya untuk membaca data milik user/member sendiri menggunakan User API Token. Endpoint admin dan internal tidak termasuk dalam spesifikasi publik ini."
+  },
+  "servers": [
+    {
+      "url": "https://leuwongrr.online",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Endpoint public untuk mengecek status API."
+    },
+    {
+      "name": "User",
+      "description": "Endpoint khusus user/member dengan User API Token."
+    },
+    {
+      "name": "Balance",
+      "description": "Endpoint untuk membaca saldo milik user sendiri."
+    },
+    {
+      "name": "Orders",
+      "description": "Endpoint untuk membaca order milik user sendiri."
+    },
+    {
+      "name": "Invoices",
+      "description": "Endpoint untuk membaca invoice milik user sendiri."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "userBearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "User API Token",
+        "x-default": "YOUR_USER_API_TOKEN",
+        "description": "Masukkan User API Token dari halaman https://leuwongrr.online/user/api-access. Gunakan tanpa prefix Bearer jika field playground sudah otomatis menambahkan Bearer."
+      }
+    },
+    "parameters": {
+      "InvoicePath": {
+        "name": "invoice",
+        "in": "path",
+        "required": true,
+        "description": "Nomor invoice milik akun pemilik token.",
+        "schema": {
+          "type": "string",
+          "example": "INV20260429113629619"
+        }
+      }
+    },
+    "schemas": {
+      "SuccessResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Unauthorized API token."
+          }
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "LeuwongRR User"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "invoice_code": {
+            "type": "string",
+            "example": "INV20260429113629619"
+          },
+          "status": {
+            "type": "string",
+            "example": "processing"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "paid"
+          }
+        }
+      },
+      "Invoice": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "invoice_code": {
+            "type": "string",
+            "example": "INV20260429113629619"
+          },
+          "type": {
+            "type": "string",
+            "example": "order"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "paid"
+          },
+          "amount": {
+            "type": "number",
+            "example": 348
+          }
+        }
+      },
+      "Balance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount",
+          "formatted",
+          "currency"
+        ],
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "Nominal saldo dalam satuan rupiah, disimpan sebagai integer.",
+            "example": 25000
+          },
+          "formatted": {
+            "type": "string",
+            "description": "Nominal saldo dalam format Rupiah yang siap ditampilkan.",
+            "example": "Rp25.000"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Kode mata uang.",
+            "example": "IDR"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "operationId": "checkApiHealth",
+        "summary": "Check API health",
+        "description": "Endpoint public untuk mengecek apakah LeuwongRR REST API v1 aktif.",
+        "security": [],
+        "x-mint": {
+          "metadata": {
+            "title": "Check API health",
+            "sidebarTitle": "Health check",
+            "description": "Cek status LeuwongRR REST API v1."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API aktif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "service": "LeuwongRR REST API v1",
+                    "enabled": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "getCurrentUser",
+        "summary": "Get current user",
+        "description": "Mengambil informasi akun user berdasarkan User API Token.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Get current user",
+            "sidebarTitle": "Current user",
+            "description": "Ambil informasi akun user pemilik token."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "user": {
+                      "id": 1,
+                      "name": "LeuwongRR User",
+                      "email": "user@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid atau tidak dikirim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized API token."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Terlalu banyak request. Silakan coba lagi beberapa saat."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/balance": {
+      "get": {
+        "tags": [
+          "Balance"
+        ],
+        "operationId": "getMyBalance",
+        "summary": "Check own balance",
+        "description": "Mengambil saldo akun milik user pemilik token. Endpoint ini tidak menerima user_id agar saldo tidak bisa diarahkan ke akun lain.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Check own balance",
+            "sidebarTitle": "Check balance",
+            "description": "Ambil saldo akun milik token user."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saldo user ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "balance": {
+                      "amount": 25000,
+                      "formatted": "Rp25.000",
+                      "currency": "IDR"
+                    },
+                    "updated_at": "2026-04-29T09:30:00+07:00"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid atau tidak dikirim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized API token."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Terlalu banyak request. Silakan coba lagi beberapa saat."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/orders": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "listOwnOrders",
+        "summary": "List own orders",
+        "description": "Mengambil daftar order milik user pemilik token.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "List own orders",
+            "sidebarTitle": "List orders",
+            "description": "Ambil daftar order milik akun sendiri."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Daftar order user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "orders": [
+                      {
+                        "invoice_code": "INV20260429113629619",
+                        "status": "processing",
+                        "payment_status": "paid"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/orders/{invoice}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "operationId": "getOwnOrderByInvoice",
+        "summary": "Get own order",
+        "description": "Mengambil detail order berdasarkan nomor invoice. Endpoint ini hanya bisa membaca order milik user pemilik token.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/InvoicePath"
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Get own order",
+            "sidebarTitle": "Order detail",
+            "description": "Ambil detail order berdasarkan invoice milik akun sendiri."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "order": {
+                      "invoice_code": "INV20260429113629619",
+                      "status": "processing",
+                      "payment_status": "paid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order tidak ditemukan atau bukan milik user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Order tidak ditemukan."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/invoices/{invoice}": {
+      "get": {
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "getOwnInvoiceByInvoiceCode",
+        "summary": "Get own invoice",
+        "description": "Mengambil detail invoice milik user pemilik token.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/InvoicePath"
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Get own invoice",
+            "sidebarTitle": "Invoice detail",
+            "description": "Ambil detail invoice milik akun sendiri."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "invoice": {
+                      "invoice_code": "INV20260429113629619",
+                      "type": "order",
+                      "payment_status": "paid",
+                      "amount": 348
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan atau bukan milik user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invoice tidak ditemukan."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/invoices/{invoice}/status": {
+      "get": {
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "getOwnInvoiceStatus",
+        "summary": "Get own invoice status",
+        "description": "Mengambil status invoice milik user pemilik token.",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/InvoicePath"
+          }
+        ],
+        "x-mint": {
+          "metadata": {
+            "title": "Get own invoice status",
+            "sidebarTitle": "Invoice status",
+            "description": "Ambil status invoice milik akun sendiri."
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status invoice ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "invoice": {
+                      "invoice_code": "INV20260429113629619",
+                      "type": "order",
+                      "payment_status": "paid",
+                      "amount": 348
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan atau bukan milik user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invoice tidak ditemukan."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
