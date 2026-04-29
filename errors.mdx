@@ -1,0 +1,80 @@
+---
+title: Errors
+description: Format error dan kode status umum LeuwongRR User API.
+---
+
+# Errors
+
+LeuwongRR User API menggunakan response JSON untuk kondisi sukses maupun error.
+
+## Format error umum
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized API token."
+}
+```
+
+## Kode status umum
+
+| Status | Arti | Penyebab umum |
+|---:|---|---|
+| `400` | Bad Request | Parameter tidak valid |
+| `401` | Unauthorized | Token kosong, salah, expired, atau revoked |
+| `403` | Forbidden | Token tidak punya akses ke resource tersebut |
+| `404` | Not Found | Invoice/order tidak ditemukan atau bukan milik user |
+| `422` | Validation Error | Format input tidak sesuai |
+| `429` | Too Many Requests | Request terlalu sering |
+| `500` | Server Error | Gangguan internal server |
+
+## 401 Unauthorized
+
+Terjadi saat token tidak dikirim atau tidak valid.
+
+```json
+{
+  "success": false,
+  "message": "Unauthorized API token."
+}
+```
+
+Solusi:
+
+- Pastikan header `Authorization` dikirim
+- Pastikan formatnya `Bearer YOUR_USER_API_TOKEN`
+- Regenerate token jika token lama sudah dicabut
+
+## 404 Not Found
+
+Terjadi saat invoice/order tidak ditemukan atau bukan milik akun pemilik token.
+
+```json
+{
+  "success": false,
+  "message": "Invoice tidak ditemukan."
+}
+```
+
+Solusi:
+
+- Pastikan nomor invoice benar
+- Pastikan invoice tersebut milik akun pemilik token
+- Jangan memakai token user lain
+
+## 429 Too Many Requests
+
+Terjadi saat request terlalu sering.
+
+```json
+{
+  "success": false,
+  "message": "Terlalu banyak request. Silakan coba lagi beberapa saat."
+}
+```
+
+Solusi:
+
+- Kurangi frekuensi polling
+- Tunggu sesuai header `Retry-After`
+- Gunakan cache atau jeda request

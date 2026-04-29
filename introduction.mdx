@@ -1,0 +1,81 @@
+---
+title: Introduction
+description: Dokumentasi publik LeuwongRR User API khusus untuk member/user.
+---
+
+# LeuwongRR User API
+
+LeuwongRR User API adalah REST API publik khusus member untuk membaca data milik akun sendiri secara aman.
+
+Dengan API ini, user dapat menghubungkan akun LeuwongRR ke website pribadi, bot Discord, bot Telegram, dashboard monitoring, atau sistem cek invoice otomatis.
+
+<Note>
+Dokumentasi ini hanya membahas endpoint user. Endpoint admin, internal, maintenance, debug, dan sistem operasional LeuwongRR tidak ditampilkan di dokumentasi publik.
+</Note>
+
+## Base URL
+
+```txt
+https://leuwongrr.online
+```
+
+## Endpoint yang tersedia
+
+```txt
+GET /api/v1/health
+GET /api/v1/me
+GET /api/v1/me/balance
+GET /api/v1/me/orders
+GET /api/v1/me/orders/{invoice}
+GET /api/v1/me/invoices/{invoice}
+GET /api/v1/me/invoices/{invoice}/status
+```
+
+## Cocok untuk
+
+| Kebutuhan | Contoh penggunaan |
+|---|---|
+| Website pribadi | Menampilkan status invoice/order user sendiri |
+| Bot Discord | Command `/cek_invoice` |
+| Bot Telegram | Cek status pembayaran otomatis |
+| Dashboard | Monitoring order milik akun sendiri |
+| Sistem reseller | Tracking invoice tanpa membuka dashboard manual |
+
+## Batas akses
+
+User API Token hanya dapat membaca data milik pemilik token.
+
+Token user tidak dapat digunakan untuk:
+
+- Membaca data user lain
+- Mengakses endpoint admin
+- Mengubah konfigurasi sistem
+- Membuka data internal LeuwongRR
+- Melewati validasi kepemilikan invoice/order
+
+## Alur aman integrasi
+
+```txt
+Website / Bot User
+        ↓
+Backend / Server User
+        ↓ Authorization: Bearer USER_API_TOKEN
+LeuwongRR User API
+```
+
+Jangan memanggil API langsung dari frontend browser jika token akan terlihat oleh publik.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Mulai test API dalam beberapa menit.
+  </Card>
+  <Card title="Authentication" icon="key" href="/authentication">
+    Pelajari cara memakai User API Token.
+  </Card>
+  <Card title="Rate Limits" icon="gauge" href="/rate-limits">
+    Batas request dan cara menangani 429.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Lihat daftar endpoint user-only.
+  </Card>
+</CardGroup>

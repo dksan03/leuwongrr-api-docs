@@ -1,0 +1,86 @@
+---
+title: User API Access
+description: Panduan membuat, menggunakan, dan mengamankan User API Token LeuwongRR.
+---
+
+# User API Access
+
+Halaman User API Access digunakan member untuk membuat dan mengelola token API pribadi.
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+## Fungsi User API Token
+
+Token ini dipakai untuk membaca data milik akun sendiri melalui LeuwongRR User API.
+
+Dengan token ini, kamu bisa:
+
+- Cek profil akun sendiri
+- Melihat daftar order sendiri
+- Cek detail order berdasarkan invoice
+- Cek detail invoice sendiri
+- Cek status pembayaran invoice
+- Menghubungkan akun ke website atau bot pribadi
+
+## Hak akses token
+
+Token user hanya berlaku untuk data milik akun pembuat token.
+
+| Akses | Status |
+|---|---|
+| Cek profil sendiri | Diizinkan |
+| Cek order sendiri | Diizinkan |
+| Cek invoice sendiri | Diizinkan |
+| Cek invoice user lain | Tidak diizinkan |
+| Akses endpoint admin | Tidak diizinkan |
+| Ubah data sistem | Tidak diizinkan |
+
+## Cara membuat token
+
+1. Login ke LeuwongRR
+2. Buka halaman User API Access
+3. Klik generate token
+4. Salin token yang muncul
+5. Simpan token di backend/server/bot kamu
+
+## Cara memakai token
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me
+```
+
+## Contoh untuk bot Discord atau Telegram
+
+User mengetik:
+
+```txt
+/cek_invoice INV20260429113629619
+```
+
+Backend bot melakukan request:
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+```
+
+Bot menampilkan hasil:
+
+```txt
+Invoice: INV20260429113629619
+Status: paid
+Type: order
+```
+
+## Rekomendasi implementasi
+
+- Pakai environment variable
+- Jangan hardcode token di source code publik
+- Batasi request otomatis agar tidak terkena rate limit
+- Gunakan retry dengan jeda saat menerima `429`
+- Regenerate token jika server kamu pernah bocor

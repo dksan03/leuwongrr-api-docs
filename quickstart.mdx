@@ -1,0 +1,122 @@
+---
+title: Quickstart
+description: Cara cepat memakai LeuwongRR User API dari token sampai request pertama.
+---
+
+# Quickstart
+
+Ikuti langkah berikut untuk mulai memakai LeuwongRR User API.
+
+## 1. Login ke akun LeuwongRR
+
+Buka dashboard member:
+
+```txt
+https://leuwongrr.online/login
+```
+
+## 2. Buka User API Access
+
+Masuk ke halaman token API user:
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+## 3. Generate User API Token
+
+Klik tombol generate token, lalu simpan token di tempat aman.
+
+<Warning>
+Jangan simpan token di HTML publik, JavaScript frontend, GitHub public repository, URL query, atau chat publik.
+</Warning>
+
+## 4. Test health endpoint
+
+Endpoint health tidak membutuhkan token.
+
+```bash
+curl https://leuwongrr.online/api/v1/health
+```
+
+Contoh response:
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "service": "LeuwongRR REST API v1",
+    "enabled": true
+  }
+}
+```
+
+## 5. Test token user
+
+Gunakan token melalui header `Authorization`.
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me
+```
+
+Contoh response:
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "LeuwongRR User",
+      "email": "user@example.com"
+    }
+  }
+}
+```
+
+## 6. Cek saldo user
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me/balance
+```
+
+Contoh response:
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "balance": {
+      "amount": 25000,
+      "formatted": "Rp25.000",
+      "currency": "IDR"
+    },
+    "updated_at": "2026-04-29T09:30:00+07:00"
+  }
+}
+```
+
+## 7. Cek status invoice
+
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+```
+
+## Checklist integrasi
+
+- Token dibuat dari halaman User API Access
+- Token dikirim lewat header, bukan URL
+- Request dilakukan dari backend/server/bot
+- Endpoint yang digunakan hanya endpoint user
+- Saldo dicek melalui `/api/v1/me/balance`, bukan endpoint berbasis `user_id`
+- Sistem menangani error `401`, `404`, dan `429`

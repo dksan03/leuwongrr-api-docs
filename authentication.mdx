@@ -1,0 +1,95 @@
+---
+title: Authentication
+description: Cara autentikasi request LeuwongRR User API menggunakan Bearer Token.
+---
+
+# Authentication
+
+LeuwongRR User API menggunakan **User API Token** dengan skema **Bearer Token**.
+
+Setiap endpoint user wajib mengirim header berikut:
+
+```http
+Authorization: Bearer YOUR_USER_API_TOKEN
+Accept: application/json
+```
+
+## Format request
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  https://leuwongrr.online/api/v1/me
+```
+
+## Endpoint public
+
+Endpoint berikut tidak membutuhkan token:
+
+```txt
+GET /api/v1/health
+```
+
+## Endpoint dengan token
+
+Endpoint berikut wajib memakai User API Token:
+
+```txt
+GET /api/v1/me
+GET /api/v1/me/orders
+GET /api/v1/me/orders/{invoice}
+GET /api/v1/me/invoices/{invoice}
+GET /api/v1/me/invoices/{invoice}/status
+```
+
+## Keamanan token
+
+<Warning>
+User API Token adalah akses pribadi ke data akun kamu sendiri. Jangan bagikan token ke orang lain.
+</Warning>
+
+Jangan simpan token di:
+
+- HTML publik
+- JavaScript frontend
+- Repository GitHub publik
+- URL query seperti `?token=...`
+- Screenshot publik
+- Chat publik
+
+Simpan token di:
+
+- File `.env`
+- Backend website
+- Server bot
+- Secret manager
+- Environment variable hosting
+
+## Pola yang benar
+
+```txt
+User membuka website/bot
+        ↓
+Backend/server kamu membaca token dari ENV
+        ↓
+Backend/server request ke LeuwongRR API
+        ↓
+Response aman dikirim ke user
+```
+
+## Pola yang salah
+
+```txt
+Frontend browser
+        ↓ token terlihat di DevTools
+LeuwongRR User API
+```
+
+## Jika token bocor
+
+Jika token dicurigai bocor:
+
+1. Login ke akun LeuwongRR
+2. Buka `https://leuwongrr.online/user/api-access`
+3. Revoke atau regenerate token
+4. Update token baru di backend/server/bot kamu

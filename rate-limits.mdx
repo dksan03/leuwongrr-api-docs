@@ -1,0 +1,132 @@
+---
+title: Rate Limits
+description: Batas penggunaan LeuwongRR User API dan cara menangani response 429.
+---
+
+# Rate Limits
+
+LeuwongRR User API memakai rate limit untuk menjaga layanan tetap aman, stabil, dan nyaman digunakan oleh semua member.
+
+Rate limit membantu mencegah:
+
+- Spam request
+- Penyalahgunaan API token
+- Bot yang melakukan request terlalu sering
+- Beban server berlebihan
+- Akses mencurigakan dari sistem eksternal
+
+<Note>
+Rate limit berlaku untuk User API Token yang dibuat dari halaman `https://leuwongrr.online/user/api-access`.
+</Note>
+
+## Batas request user API
+
+Untuk penggunaan normal, batas berikut aman untuk website, bot, atau dashboard sederhana.
+
+| Jenis limit | Batas rekomendasi |
+|---|---:|
+| Request per menit | 60 request / menit |
+| Request per jam | 1.000 request / jam |
+| Request paralel | Maksimal 2–3 request bersamaan |
+| Token lewat URL | Tidak diizinkan |
+| Token lewat header | Wajib |
+
+<Warning>
+Jangan melakukan polling setiap 1 detik. Request terlalu agresif dapat terkena `429 Too Many Requests`.
+</Warning>
+
+## Endpoint yang dihitung rate limit
+
+```txt
+GET /api/v1/me
+GET /api/v1/me/orders
+GET /api/v1/me/orders/{invoice}
+GET /api/v1/me/invoices/{invoice}
+GET /api/v1/me/invoices/{invoice}/status
+```
+
+Endpoint berikut dapat digunakan untuk pengecekan ringan:
+
+```txt
+GET /api/v1/health
+```
+
+## Response jika terkena rate limit
+
+Jika request terlalu sering, API dapat mengembalikan:
+
+```txt
+429 Too Many Requests
+```
+
+Contoh response:
+
+```json
+{
+  "success": false,
+  "message": "Terlalu banyak request. Silakan coba lagi beberapa saat."
+}
+```
+
+## Header rate limit
+
+Jika tersedia, response API dapat menyertakan header berikut:
+
+| Header | Keterangan |
+|---|---|
+| `Retry-After` | Waktu tunggu dalam detik sebelum mencoba lagi |
+| `X-RateLimit-Limit` | Batas request periode saat ini |
+| `X-RateLimit-Remaining` | Sisa request yang masih tersedia |
+| `X-RateLimit-Reset` | Waktu reset limit dalam Unix timestamp |
+
+Contoh:
+
+```http
+Retry-After: 30
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1760000000
+```
+
+Jika menerima status `429`, tunggu sesuai nilai `Retry-After` sebelum mencoba lagi.
+
+## Rekomendasi interval request
+
+| Kebutuhan | Rekomendasi |
+|---|---:|
+| Cek status invoice | Setiap 10–30 detik |
+| Cek daftar order | Setiap 30–60 detik |
+| Cek profil `/me` | Saat login / saat halaman dibuka |
+| Bot command manual | Saat user menjalankan command |
+| Auto refresh dashboard | Minimal 15–30 detik |
+
+## Cara retry yang aman
+
+Gunakan exponential backoff sederhana:
+
+```js
+async function fetchWithRetry(url, options, retries = 3) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const response = await fetch(url, options);
+
+    if (response.status !== 429) {
+      return response;
+    }
+
+    const retryAfter = Number(response.headers.get('Retry-After') || 5);
+    await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+  }
+
+  throw new Error('Rate limit exceeded. Please try again later.');
+}
+```
+
+## Praktik terbaik
+
+- Simpan token di backend/server/bot
+- Jangan simpan token di frontend JavaScript
+- Jangan upload token ke GitHub
+- Gunakan HTTPS
+- Gunakan cache ringan untuk data yang sering dibaca
+- Hindari request berulang terlalu cepat
+- Regenerate token jika dicurigai bocor

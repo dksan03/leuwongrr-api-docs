@@ -1,0 +1,69 @@
+---
+title: Check Saldo
+description: Cara user melihat saldo akun melalui LeuwongRR User API.
+---
+
+# Check Saldo
+
+Gunakan endpoint ini untuk membaca saldo akun milik user yang sedang memakai User API Token.
+
+<Info>
+Endpoint ini hanya membaca saldo dari token yang aktif. Tidak ada parameter `user_id`, email, atau identifier user lain.
+</Info>
+
+## Endpoint
+
+```http
+GET /api/v1/me/balance
+```
+
+## Authentication
+
+Kirim User API Token melalui header:
+
+```http
+Authorization: Bearer YOUR_USER_API_TOKEN
+Accept: application/json
+```
+
+## Contoh Request
+
+```bash
+curl -X GET "https://leuwongrr.online/api/v1/me/balance" \
+  -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json"
+```
+
+## Contoh Response
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "balance": {
+      "amount": 25000,
+      "formatted": "Rp25.000",
+      "currency": "IDR"
+    },
+    "updated_at": "2026-04-29T09:30:00+07:00"
+  }
+}
+```
+
+## Aturan Aman
+
+- Jangan kirim token melalui URL query.
+- Jangan simpan token di HTML atau JavaScript publik.
+- Jangan buat endpoint seperti `/users/{id}/balance` untuk user publik.
+- Saldo harus selalu diambil dari user pemilik token.
+- Gunakan backend/server/bot pribadi untuk melakukan request ke API.
+
+## Error Umum
+
+| Status | Arti |
+|---:|---|
+| `401` | Token tidak dikirim, salah, atau sudah dicabut |
+| `429` | Terlalu banyak request dalam waktu singkat |
+| `500` | Terjadi error di server |
+

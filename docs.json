@@ -1,0 +1,66 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "LeuwongRR User API",
+  "colors": {
+    "primary": "#7eff2f",
+    "light": "#7eff2f",
+    "dark": "#7eff2f"
+  },
+  "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": true
+    },
+    "params": {
+      "expanded": "all"
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "php"
+      ],
+      "defaults": "required",
+      "prefill": true,
+      "autogenerate": true
+    },
+    "openapi": "api-reference/openapi.json",
+    "url": "full"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Mulai di Sini",
+        "pages": [
+          "introduction",
+          "quickstart",
+          "authentication",
+          "user-api-access",
+          "balance",
+          "rate-limits",
+          "errors"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction"
+        ]
+      },
+      {
+        "group": "Endpoint User API",
+        "openapi": "api-reference/openapi.json",
+        "pages": [
+          "GET /api/v1/health",
+          "GET /api/v1/me",
+          "GET /api/v1/me/balance",
+          "GET /api/v1/me/orders",
+          "GET /api/v1/me/orders/{invoice}",
+          "GET /api/v1/me/invoices/{invoice}",
+          "GET /api/v1/me/invoices/{invoice}/status"
+        ]
+      }
+    ]
+  }
+}
