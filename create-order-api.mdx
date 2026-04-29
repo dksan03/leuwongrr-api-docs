@@ -1,0 +1,52 @@
+---
+title: Create Order API
+description: Panduan membuat order user lewat User API secara aman.
+---
+
+# Create Order API
+
+Endpoint ini digunakan untuk membuat order baru milik akun pemilik User API Token.
+
+<Warning>
+Gunakan endpoint ini dengan hati-hati. Order yang valid akan membuat invoice/order baru di LeuwongRR. Untuk testing aman, gunakan `payment_method: invoice`.
+</Warning>
+
+## Endpoint
+
+```http
+POST /api/v1/me/orders
+```
+
+## Headers
+
+```http
+Authorization: Bearer USER_API_TOKEN
+Accept: application/json
+Content-Type: application/json
+Idempotency-Key: unique-order-key-001
+```
+
+## Request Body
+
+```json
+{
+  "order_type": "gamepass",
+  "roblox_username": "LeuwongUser",
+  "place_id": 123456789,
+  "roblox_pass_id": 987654321,
+  "payment_method": "invoice",
+  "client_reference": "bot-order-001"
+}
+```
+
+## Keamanan
+
+User API tidak menerima field sensitif seperti `user_id`, `email`, `price`, `total_amount`, `status`, atau `paid_at`. Semua data penting dihitung oleh server LeuwongRR.
+
+## Validasi
+
+Order tetap melewati validasi server LeuwongRR, termasuk validasi Roblox, gamepass/place, harga, diskon, payment method, invoice, dan ownership token user.
+
+## Testing dari Bot
+
+Bot cukup mengirim input user ke endpoint ini. Bot tidak perlu menghitung harga dan tidak boleh menentukan status order.

@@ -39,6 +39,7 @@
           "user-api-access",
           "balance",
           "available-features",
+          "create-order-api",
           "rate-limits",
           "errors"
         ]
@@ -60,6 +61,7 @@
           "GET /api/v1/me/balance/transactions",
           "GET /api/v1/me/deposits",
           "GET /api/v1/me/deposits/{invoice}",
+          "POST /api/v1/me/orders",
           "GET /api/v1/me/orders",
           "GET /api/v1/me/orders/{invoice}",
           "GET /api/v1/me/invoices/{invoice}",

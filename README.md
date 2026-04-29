@@ -135,6 +135,16 @@ curl --request GET \
 
 ---
 
+
+## Sandbox & Production API Key
+
+User dapat membuat dua mode API key dari halaman User API Access:
+
+- **Sandbox API Key** (`lrrs_v1_`) untuk uji coba integrasi bot/website. Invoice test memakai prefix `SBX-` dan tidak membuat charge payment gateway real.
+- **Production API Key** (`lrrp_v1_`) untuk penggunaan live setelah integrasi sudah siap.
+
+Gunakan Sandbox terlebih dahulu untuk development, lalu pindah ke Production ketika flow sudah valid.
+
 ## Authentication
 
 Semua endpoint user membutuhkan **Bearer Token**.
@@ -306,3 +316,14 @@ Gunakan LeuwongRR User API untuk menghubungkan akun kamu ke website, bot, atau d
 [📘 Buka Dokumentasi](https://docs.leuwongrr.online)  
 [🔑 Buat API Token](https://leuwongrr.online/user/api-access)  
 [🌐 Kunjungi LeuwongRR](https://leuwongrr.online)
+
+## User Order API
+
+Endpoint transaksi user-only yang tersedia untuk testing:
+
+```http
+POST /api/v1/me/orders
+```
+
+Gunakan `payment_method: invoice` untuk pengujian aman. User diambil dari Bearer Token, sedangkan harga, validasi Roblox, invoice, dan status dibuat oleh server LeuwongRR.
+

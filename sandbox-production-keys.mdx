@@ -1,0 +1,39 @@
+---
+title: Sandbox & Production API Key
+description: Perbedaan API key sandbox dan production untuk integrasi User API LeuwongRR.
+---
+
+# Sandbox & Production API Key
+
+LeuwongRR User API mendukung dua mode API key agar integrasi bot, website, atau dashboard bisa diuji dengan lebih aman.
+
+## Mode API Key
+
+| Mode | Prefix token | Fungsi |
+|---|---|---|
+| Sandbox | `lrrs_v1_` | Untuk uji coba integrasi. Invoice test memakai prefix `SBX-` dan tidak membuat charge/gateway real. |
+| Production | `lrrp_v1_` | Untuk penggunaan live/production. Gunakan setelah integrasi sudah siap. |
+
+## Rekomendasi Alur Integrasi
+
+1. Buat API key mode **Sandbox**.
+2. Test endpoint read-only seperti saldo, order, invoice, dan status.
+3. Test `POST /api/v1/me/orders` dengan `payment_method: invoice`.
+4. Pastikan bot menangani response sukses dan error dengan benar.
+5. Setelah aman, buat API key mode **Production** dan update environment bot.
+
+## Header Request
+
+```http
+Authorization: Bearer USER_API_TOKEN
+Accept: application/json
+Content-Type: application/json
+```
+
+## Catatan Keamanan
+
+<Warning>
+Jangan simpan Production API Key di repository publik, frontend JavaScript, screenshot, atau channel Discord/Telegram publik.
+</Warning>
+
+Sandbox key tetap terhubung ke akun user yang sama, tetapi dibuat untuk testing supaya tidak tertukar dengan transaksi production.

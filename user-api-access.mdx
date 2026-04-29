@@ -84,3 +84,17 @@ Type: order
 - Batasi request otomatis agar tidak terkena rate limit
 - Gunakan retry dengan jeda saat menerima `429`
 - Regenerate token jika server kamu pernah bocor
+
+
+## Sandbox dan Production API Key
+
+Pada halaman User API Access, user bisa membuat dua jenis API key:
+
+| Mode | Prefix token | Kegunaan |
+|---|---|---|
+| Sandbox | `lrrs_v1_` | Untuk uji coba integrasi bot/website tanpa membuat charge payment gateway real. Invoice test memakai prefix `SBX-`. |
+| Production | `lrrp_v1_` | Untuk transaksi live/production. Gunakan hanya ketika integrasi sudah siap. |
+
+<Warning>
+Jangan memakai Production API Key untuk development bot. Mulai dari Sandbox terlebih dahulu, lalu pindah ke Production setelah flow sudah valid.
+</Warning>
