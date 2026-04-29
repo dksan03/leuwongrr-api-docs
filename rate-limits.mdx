@@ -1,0 +1,223 @@
+---
+title: Rate Limits
+description: Batas penggunaan LeuwongRR User API untuk menjaga keamanan dan stabilitas layanan.
+---
+
+# Rate Limits
+
+LeuwongRR User API memiliki batas penggunaan untuk menjaga layanan tetap aman, stabil, dan nyaman digunakan oleh semua member.
+
+Rate limit membantu mencegah:
+
+- Spam request
+- Penyalahgunaan API token
+- Bot yang terlalu sering melakukan request
+- Beban server berlebihan
+- Akses mencurigakan dari sistem eksternal
+
+Rate limit ini berlaku untuk **User API Token** yang dibuat dari halaman:
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+---
+
+## Batas Request User API
+
+Untuk penggunaan normal, batas API dibuat cukup aman untuk kebutuhan website, bot, atau dashboard sederhana.
+
+| Jenis Limit | Batas |
+|---|---:|
+| Request per menit | 60 request / menit |
+| Request per jam | 1.000 request / jam |
+| Request paralel | Disarankan maksimal 2–3 request bersamaan |
+| Token lewat URL | Tidak diizinkan |
+| Token lewat header | Wajib |
+
+> Gunakan API secara wajar. Jangan melakukan request terlalu sering dalam waktu singkat.
+
+---
+
+## Endpoint yang Dihitung Rate Limit
+
+Rate limit berlaku untuk endpoint User API berikut:
+
+```txt
+GET /api/v1/me
+GET /api/v1/me/orders
+GET /api/v1/me/orders/{invoice}
+GET /api/v1/me/invoices/{invoice}
+GET /api/v1/me/invoices/{invoice}/status
+```
+
+Endpoint public berikut dapat digunakan untuk pengecekan ringan:
+
+```txt
+GET /api/v1/health
+```
+
+---
+
+## Response Jika Terkena Rate Limit
+
+Jika request terlalu sering, API dapat mengembalikan status:
+
+```txt
+429 Too Many Requests
+```
+
+Contoh response:
+
+```json
+{
+  "success": false,
+  "message": "Terlalu banyak request. Silakan coba lagi beberapa saat."
+}
+```
+
+---
+
+## Header Rate Limit
+
+Jika tersedia, response API dapat menyertakan header berikut:
+
+| Header | Keterangan |
+|---|---|
+| `Retry-After` | Waktu tunggu dalam detik sebelum melakukan request lagi |
+| `X-RateLimit-Limit` | Batas request pada periode saat ini |
+| `X-RateLimit-Remaining` | Sisa request yang masih tersedia |
+| `X-RateLimit-Reset` | Waktu reset limit dalam format Unix timestamp |
+
+Contoh:
+
+```http
+Retry-After: 30
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1760000000
+```
+
+Jika menerima status `429`, tunggu sesuai nilai `Retry-After` sebelum mencoba lagi.
+
+---
+
+## Cara Menggunakan API dengan Aman
+
+### Benar
+
+Gunakan token melalui header:
+
+```http
+Authorization: Bearer YOUR_USER_API_TOKEN
+Accept: application/json
+```
+
+Contoh:
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+https://leuwongrr.online/api/v1/me
+```
+
+### Salah
+
+Jangan kirim token melalui URL:
+
+```txt
+https://leuwongrr.online/api/v1/me?token=YOUR_USER_API_TOKEN
+```
+
+Token melalui query URL tidak didukung dan dapat ditolak oleh sistem.
+
+---
+
+## Rekomendasi Untuk Website atau Bot
+
+Jika kamu membuat website, bot Discord, bot Telegram, atau dashboard sendiri, gunakan pola berikut:
+
+```txt
+Website / Bot Kamu
+        ↓
+Backend / Server Kamu
+        ↓ Authorization: Bearer USER_API_TOKEN
+LeuwongRR User API
+```
+
+Jangan gunakan token langsung dari frontend browser.
+
+---
+
+## Rekomendasi Interval Request
+
+Agar integrasi tetap ringan dan aman:
+
+| Kebutuhan | Rekomendasi |
+|---|---:|
+| Cek status invoice | Setiap 10–30 detik |
+| Cek daftar order | Setiap 30–60 detik |
+| Cek profil `/me` | Saat login / saat halaman dibuka |
+| Bot command manual | Saat user menjalankan command |
+| Auto refresh dashboard | Minimal 15–30 detik |
+
+Jangan melakukan polling setiap 1 detik karena dapat dianggap terlalu agresif.
+
+---
+
+## Contoh Integrasi Bot
+
+Misalnya user mengetik:
+
+```txt
+/cek_invoice INV20260429113629619
+```
+
+Bot dapat request:
+
+```bash
+curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+```
+
+Jika sukses, bot bisa menampilkan:
+
+```txt
+Invoice: INV20260429113629619
+Status: paid
+Type: order
+```
+
+---
+
+## Jika Terkena 429
+
+Jika mendapat response `429 Too Many Requests`:
+
+1. Hentikan request sementara.
+2. Tunggu sesuai header `Retry-After`.
+3. Kurangi frekuensi polling.
+4. Pastikan bot/website tidak melakukan loop request terlalu cepat.
+5. Jangan membuat banyak request bersamaan untuk invoice yang sama.
+
+---
+
+## Praktik Terbaik
+
+Agar penggunaan API lebih aman:
+
+- Simpan token di backend/server/bot
+- Jangan simpan token di frontend JavaScript
+- Jangan upload token ke GitHub
+- Jangan bagikan token ke chat publik
+- Gunakan HTTPS
+- Gunakan retry dengan jeda
+- Hindari request berulang terlalu cepat
+- Regenerate token jika dicurigai bocor
+
+---
+
+## Ringkasan
+
+LeuwongRR User API dirancang untuk membantu member menghubungkan akun mereka ke website atau bot pribadi secara aman.
+
+Gunakan API secara wajar, simpan token dengan aman, dan hindari request berlebihan agar layanan tetap stabil untuk semua user.
