@@ -54,10 +54,6 @@
         "openapi": "api-reference/openapi.json",
         "pages": [
           "GET /api/v1/health",
-          "GET /api/v1/catalog/robux-packages",
-          "GET /api/v1/catalog/payment-methods",
-          "GET /api/v1/articles",
-          "GET /api/v1/articles/{slug}",
           "GET /api/v1/me",
           "GET /api/v1/me/dashboard-summary",
           "GET /api/v1/me/balance",
