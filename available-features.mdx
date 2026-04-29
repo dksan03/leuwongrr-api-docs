@@ -1,0 +1,30 @@
+---
+title: Fitur API Ringan
+description: Endpoint tambahan yang aman dan cocok dipakai user, bot, website, atau dashboard ringan.
+---
+
+# Fitur API Ringan
+
+Endpoint di bawah ini dipilih karena ringan, aman untuk user, dan tidak membuka akses admin/internal.
+
+## Endpoint Public
+
+Endpoint ini tidak memerlukan User API Token:
+
+- `GET /api/v1/catalog/robux-packages`
+- `GET /api/v1/catalog/payment-methods`
+- `GET /api/v1/articles`
+- `GET /api/v1/articles/{slug}`
+
+## Endpoint User
+
+Endpoint ini wajib memakai User API Token:
+
+- `GET /api/v1/me/dashboard-summary`
+- `GET /api/v1/me/balance/transactions`
+- `GET /api/v1/me/deposits`
+- `GET /api/v1/me/deposits/{invoice}`
+
+<Warning>
+Endpoint admin, internal, webhook, payment callback, dan pengaturan sistem tidak dimasukkan ke dokumentasi publik.
+</Warning>
