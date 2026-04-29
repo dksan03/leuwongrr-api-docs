@@ -52,6 +52,16 @@ Token user tidak bisa membaca invoice atau order milik user lain.
 | Reseller | Pantau status transaksi lebih cepat |
 | Developer | Integrasi data akun sendiri ke sistem eksternal |
 
+| Rate Limits | Batas penggunaan API dan cara menangani status 429 |
+| Halaman | Keterangan |
+|---|---|
+| Introduction | Gambaran umum LeuwongRR User API |
+| Quickstart | Panduan mulai cepat |
+| Authentication | Cara penggunaan User API Token |
+| User API Access | Cara membuat dan memakai token user |
+| Rate Limits | Batas penggunaan API dan cara menangani status 429 |
+| Errors | Format error dan respons |
+| API Reference | Daftar endpoint User API |
 ---
 
 ## Yang Bisa Kamu Lakukan
