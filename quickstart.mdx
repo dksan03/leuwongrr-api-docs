@@ -1,0 +1,40 @@
+---
+title: Quickstart
+description: Mulai memakai LeuwongRR REST API.
+---
+
+# Quickstart
+
+## 1. Cek API health
+
+Endpoint health public dan tidak membutuhkan token.
+
+```bash
+curl https://leuwongrr.online/api/v1/health
+```
+
+## 2. Request dengan Bearer token
+
+Gunakan header berikut untuk endpoint private.
+
+```http
+Authorization: Bearer YOUR_API_TOKEN
+Accept: application/json
+```
+
+Contoh cek invoice status:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  https://leuwongrr.online/api/v1/invoices/INV20260429113629619/status
+```
+
+## 3. User API Token
+
+Member bisa membuat token dari halaman berikut:
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+Token user hanya bisa membaca data miliknya sendiri.

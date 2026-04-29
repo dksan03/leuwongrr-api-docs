@@ -1,0 +1,39 @@
+---
+title: Authentication
+description: Cara autentikasi REST API LeuwongRR.
+---
+
+# Authentication
+
+LeuwongRR REST API memakai Bearer token.
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+## Jenis token
+
+| Token | Pemakai | Scope |
+| --- | --- | --- |
+| Admin API Token | Sistem internal/admin | Order, invoice, callback |
+| User API Token | Member | Data milik user sendiri |
+
+## Admin API Token
+
+Admin token disimpan di file `.env` server.
+
+```env
+API_V1_ENABLED=true
+API_V1_TOKEN="your-secret-token"
+API_V1_ALLOW_BALANCE_ORDER=false
+```
+
+## User API Token
+
+User bisa generate token sendiri dari dashboard member.
+
+```txt
+/user/api-access
+```
+
+Token user tidak bisa membaca invoice/order user lain.
