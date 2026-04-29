@@ -31,6 +31,22 @@
     {
       "name": "Invoices",
       "description": "Endpoint untuk membaca invoice milik user sendiri."
+    },
+    {
+      "name": "Catalog",
+      "description": "Endpoint public ringan untuk katalog produk dan metode pembayaran yang aman ditampilkan."
+    },
+    {
+      "name": "Articles",
+      "description": "Endpoint public ringan untuk artikel yang sudah published."
+    },
+    {
+      "name": "Dashboard",
+      "description": "Endpoint ringkasan dashboard milik user sendiri."
+    },
+    {
+      "name": "Deposits",
+      "description": "Endpoint untuk membaca deposit milik user sendiri."
     }
   ],
   "components": {
@@ -53,6 +69,42 @@
           "type": "string",
           "example": "INV20260429113629619"
         }
+      },
+      "LimitQuery": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        },
+        "description": "Jumlah data maksimum yang dikembalikan."
+      },
+      "ArticleSlugPath": {
+        "name": "slug",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "cara-top-up-robux-aman"
+        },
+        "description": "Slug artikel publik."
+      },
+      "ScopeQuery": {
+        "name": "scope",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "order",
+            "deposit"
+          ],
+          "example": "order"
+        },
+        "description": "Filter metode pembayaran berdasarkan kebutuhan order atau deposit."
       }
     },
     "schemas": {
@@ -672,6 +724,561 @@
                 "example": {
                   "success": false,
                   "message": "Invoice tidak ditemukan."
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/dashboard-summary": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get own dashboard summary",
+        "description": "Mengambil ringkasan dashboard ringan milik user dari token yang digunakan.",
+        "operationId": "getMyDashboardSummary",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "summary": {
+                      "balance": {
+                        "amount": 15666,
+                        "formatted": "Rp15.666",
+                        "currency": "IDR"
+                      },
+                      "lrr_coins": 0,
+                      "discount": {
+                        "percent": 0,
+                        "expires_at": null
+                      },
+                      "orders": {
+                        "total": 3,
+                        "pending": 1,
+                        "completed": 2,
+                        "failed": 0,
+                        "total_spent": 50000,
+                        "total_robux": 400
+                      },
+                      "deposits": {
+                        "total": 2,
+                        "pending": 0,
+                        "approved": 2,
+                        "total_approved_amount": 100000
+                      },
+                      "invoices": {
+                        "pending": 1
+                      }
+                    },
+                    "generated_at": "2026-04-29 15:30:00"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/balance/transactions": {
+      "get": {
+        "tags": [
+          "Balance"
+        ],
+        "summary": "List own balance transactions",
+        "description": "Mengambil mutasi saldo milik user dari token yang digunakan.",
+        "operationId": "listMyBalanceTransactions",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "transactions": [
+                      {
+                        "id": 1,
+                        "type": "deposit",
+                        "amount": 50000,
+                        "formatted_amount": "Rp50.000",
+                        "balance_before": 0,
+                        "formatted_balance_before": "Rp0",
+                        "balance_after": 50000,
+                        "formatted_balance_after": "Rp50.000",
+                        "reference_type": "deposit",
+                        "reference_id": 123,
+                        "description": "Deposit saldo disetujui",
+                        "created_at": "2026-04-29 15:00:00"
+                      }
+                    ],
+                    "limit": 20
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/deposits": {
+      "get": {
+        "tags": [
+          "Deposits"
+        ],
+        "summary": "List own deposits",
+        "description": "Mengambil daftar deposit milik user dari token yang digunakan.",
+        "operationId": "listMyDeposits",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "deposits": [
+                      {
+                        "invoice_code": "DEP20260429150000123",
+                        "status": "approved",
+                        "payment_status": "paid",
+                        "amount": 50000,
+                        "formatted_amount": "Rp50.000",
+                        "currency": "IDR",
+                        "payment_type": "manual",
+                        "payment_method": "bank-transfer",
+                        "payment_channel": "manual",
+                        "invoice_url": "https://leuwongrr.online/user/invoice/DEP20260429150000123",
+                        "proof_uploaded_at": "2026-04-29 15:04:00",
+                        "approved_at": "2026-04-29 15:20:00",
+                        "created_at": "2026-04-29 15:00:00"
+                      }
+                    ],
+                    "limit": 20
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/deposits/{invoice}": {
+      "get": {
+        "tags": [
+          "Deposits"
+        ],
+        "summary": "Get own deposit detail",
+        "description": "Mengambil detail deposit/invoice deposit milik user dari token yang digunakan.",
+        "operationId": "getMyDeposit",
+        "security": [
+          {
+            "userBearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/InvoicePath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "deposit": {
+                      "invoice_code": "DEP20260429150000123",
+                      "status": "approved",
+                      "amount": 50000,
+                      "formatted_amount": "Rp50.000",
+                      "currency": "IDR"
+                    },
+                    "invoice": {
+                      "invoice_code": "DEP20260429150000123",
+                      "type": "deposit",
+                      "payment_status": "paid",
+                      "amount": 50000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/robux-packages": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "List active Robux packages",
+        "description": "Mengambil katalog paket Robux aktif. Endpoint public, tidak perlu User API Token.",
+        "operationId": "listRobuxPackages",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "packages": [
+                      {
+                        "code": "RBX-100",
+                        "name": "100 Robux",
+                        "robux_amount": 100,
+                        "price": 12000,
+                        "formatted_price": "Rp12.000",
+                        "currency": "IDR",
+                        "description": "Paket Robux aktif",
+                        "sort_order": 1
+                      }
+                    ],
+                    "limit": 50
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/payment-methods": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "List active payment methods",
+        "description": "Mengambil metode pembayaran aktif yang aman ditampilkan. Tidak menyertakan credential, callback URL, nomor internal, atau data admin.",
+        "operationId": "listPaymentMethods",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ScopeQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "payment_methods": [
+                      {
+                        "code": "qris",
+                        "slug": "qris",
+                        "name": "QRIS",
+                        "type": "gateway",
+                        "provider": "paydisini",
+                        "usage_scope": "both",
+                        "fee_type": "percent",
+                        "fee_value": 0.7,
+                        "unique_amount_enabled": false
+                      }
+                    ],
+                    "scope": "order"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Parameter tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/articles": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "List published articles",
+        "description": "Mengambil daftar artikel public yang sudah published.",
+        "operationId": "listPublishedArticles",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "articles": [
+                      {
+                        "title": "Cara Top Up Robux Aman",
+                        "slug": "cara-top-up-robux-aman",
+                        "category": "Robux",
+                        "excerpt": "Panduan singkat top up Robux aman.",
+                        "cover_image": "https://leuwongrr.online/uploads/articles/cover.webp",
+                        "article_url": "https://leuwongrr.online/artikel/cara-top-up-robux-aman",
+                        "published_at": "2026-04-29 10:00:00"
+                      }
+                    ],
+                    "limit": 10
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request terlalu sering",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/articles/{slug}": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Get published article detail",
+        "description": "Mengambil detail artikel public yang sudah published.",
+        "operationId": "getPublishedArticle",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ArticleSlugPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK",
+                  "data": {
+                    "article": {
+                      "title": "Cara Top Up Robux Aman",
+                      "slug": "cara-top-up-robux-aman",
+                      "category": "Robux",
+                      "excerpt": "Panduan singkat top up Robux aman.",
+                      "content": "<p>Isi artikel...</p>",
+                      "article_url": "https://leuwongrr.online/artikel/cara-top-up-robux-aman",
+                      "published_at": "2026-04-29 10:00:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
