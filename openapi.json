@@ -1,0 +1,408 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LeuwongRR REST API",
+    "version": "1.0.0",
+    "description": "REST API v1 untuk order, invoice, payment callback, dan user API access."
+  },
+  "servers": [
+    {
+      "url": "https://leuwongrr.online",
+      "description": "Production"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Token"
+      }
+    },
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "InvoiceStatus": {
+        "type": "object",
+        "properties": {
+          "invoice_code": {
+            "type": "string",
+            "example": "INV20260429113629619"
+          },
+          "type": {
+            "type": "string",
+            "example": "order"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "paid"
+          },
+          "amount": {
+            "type": "number",
+            "example": 348
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "Check API health",
+        "description": "Endpoint public untuk cek status REST API v1.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API aktif",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orders": {
+      "post": {
+        "summary": "Create order",
+        "description": "Membuat order baru menggunakan admin/global API token. Tidak untuk token user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "user_id",
+                  "roblox_username",
+                  "place_id",
+                  "roblox_pass_id",
+                  "payment_method"
+                ],
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "order_type": {
+                    "type": "string",
+                    "example": "gamepass"
+                  },
+                  "roblox_username": {
+                    "type": "string",
+                    "example": "xalkrime"
+                  },
+                  "place_id": {
+                    "type": "integer",
+                    "example": 123456789
+                  },
+                  "roblox_pass_id": {
+                    "type": "integer",
+                    "example": 987654321
+                  },
+                  "payment_method": {
+                    "type": "string",
+                    "example": "invoice"
+                  },
+                  "client_reference": {
+                    "type": "string",
+                    "example": "EXT-001"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order berhasil dibuat"
+          },
+          "400": {
+            "description": "Request tidak valid"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          }
+        }
+      }
+    },
+    "/api/v1/orders/{invoice}": {
+      "get": {
+        "summary": "Get order by invoice",
+        "description": "Mengambil detail order berdasarkan nomor invoice menggunakan admin/global API token.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order ditemukan"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Order tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/v1/invoices/{invoice}": {
+      "get": {
+        "summary": "Get invoice",
+        "description": "Mengambil detail invoice menggunakan admin/global API token.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice ditemukan"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/v1/invoices/{invoice}/status": {
+      "get": {
+        "summary": "Get invoice status",
+        "description": "Mengambil status pembayaran invoice menggunakan admin/global API token.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status invoice ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/v1/payment/callback/{provider}": {
+      "post": {
+        "summary": "Payment callback",
+        "description": "Endpoint callback payment gateway. Gunakan signature/token sesuai konfigurasi provider.",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "duitku"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Callback diterima"
+          },
+          "400": {
+            "description": "Callback tidak valid"
+          }
+        }
+      }
+    },
+    "/api/v1/payment/sandbox/callback/{provider}": {
+      "post": {
+        "summary": "Sandbox payment callback",
+        "description": "Endpoint callback sandbox untuk testing payment gateway.",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "paydisini"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Callback sandbox diterima"
+          },
+          "400": {
+            "description": "Callback tidak valid"
+          }
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "summary": "Get current API user",
+        "description": "Mengambil profil ringkas user berdasarkan user API token.",
+        "responses": {
+          "200": {
+            "description": "User token valid"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          }
+        }
+      }
+    },
+    "/api/v1/me/orders": {
+      "get": {
+        "summary": "List own orders",
+        "description": "Mengambil daftar order milik user token saat ini.",
+        "responses": {
+          "200": {
+            "description": "Daftar order user"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          }
+        }
+      }
+    },
+    "/api/v1/me/orders/{invoice}": {
+      "get": {
+        "summary": "Get own order",
+        "description": "Mengambil detail order milik user token saat ini.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order ditemukan"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Order tidak ditemukan atau bukan milik user"
+          }
+        }
+      }
+    },
+    "/api/v1/me/invoices/{invoice}": {
+      "get": {
+        "summary": "Get own invoice",
+        "description": "Mengambil detail invoice milik user token saat ini.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice ditemukan"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan atau bukan milik user"
+          }
+        }
+      }
+    },
+    "/api/v1/me/invoices/{invoice}/status": {
+      "get": {
+        "summary": "Get own invoice status",
+        "description": "Mengambil status invoice milik user token saat ini.",
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "INV20260429113629619"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status invoice ditemukan"
+          },
+          "401": {
+            "description": "Token tidak valid"
+          },
+          "404": {
+            "description": "Invoice tidak ditemukan atau bukan milik user"
+          }
+        }
+      }
+    }
+  }
+}

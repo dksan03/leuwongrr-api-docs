@@ -1,23 +1,20 @@
 ---
-title: Introduction
-description: Dokumentasi resmi REST API LeuwongRR.
+title: API Reference
+description: Referensi endpoint REST API v1 LeuwongRR.
 ---
 
-# LeuwongRR REST API
+# API Reference
 
-LeuwongRR REST API v1 digunakan untuk integrasi order, invoice, payment callback, dan akses data user secara aman.
+Gunakan halaman ini sebagai referensi endpoint REST API v1 LeuwongRR.
 
-## Base URL
+Base URL:
 
 ```txt
 https://leuwongrr.online
 ```
 
-## Scope API v1
+Autentikasi private endpoint:
 
-- Order API
-- Invoice API
-- Payment Callback API
-- User API Access
-
-API ini dibuat ringan untuk shared hosting, jadi endpoint yang dibuka hanya endpoint inti transaksi.
+```http
+Authorization: Bearer YOUR_API_TOKEN
+```
