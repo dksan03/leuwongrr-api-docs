@@ -1,99 +1,122 @@
 # LeuwongRR User API
 
-### Hubungkan Website atau Bot Kamu dengan Akun LeuwongRR
+![API Status](https://img.shields.io/badge/API-v1%20Active-brightgreen)
+![Access](https://img.shields.io/badge/Access-User%20Only-blue)
+![Auth](https://img.shields.io/badge/Auth-Bearer%20Token-orange)
+![Docs](https://img.shields.io/badge/Docs-Mintlify-purple)
 
-Gunakan **LeuwongRR User API** untuk cek profil, saldo, order, invoice, dan status transaksi milik akun kamu sendiri secara aman.
+## Integrasikan Akun LeuwongRR Kamu dengan Mudah
 
-[📚 Buka Dokumentasi](https://docs.leuwongrr.online) · [🔑 Buat API Token](https://leuwongrr.online/user/api-access) · [👤 Login Member](https://leuwongrr.online/login)
+LeuwongRR User API adalah API khusus member untuk menghubungkan akun LeuwongRR ke website, bot, dashboard, atau sistem pribadi secara aman dan praktis.
+
+Dengan API ini, user bisa membaca data akun sendiri seperti profil, saldo, order, invoice, status transaksi, deposit, dan mutasi saldo tanpa perlu membuka dashboard manual setiap saat.
+
+[📘 Buka Dokumentasi](https://docs.leuwongrr.online) • [🔑 Buat API Token](https://leuwongrr.online/user/api-access) • [👤 Login Member](https://leuwongrr.online/login)
 
 ---
 
 ## Apa Itu LeuwongRR User API?
 
-**LeuwongRR User API** adalah akses API khusus member LeuwongRR untuk menghubungkan akun pribadi ke sistem eksternal seperti website, bot, atau dashboard.
+LeuwongRR User API adalah akses API khusus untuk user/member LeuwongRR.
 
-API ini cocok untuk kamu yang ingin:
+API ini dibuat untuk kebutuhan integrasi ringan seperti:
 
-- Menampilkan saldo user di website atau bot pribadi
-- Menampilkan status invoice di website sendiri
-- Membuat bot Discord atau Telegram untuk cek invoice
-- Memantau order tanpa membuka dashboard manual
-- Membuat dashboard monitoring sederhana
-- Menghubungkan data akun sendiri ke backend pribadi
+- menampilkan saldo akun di website pribadi
+- membuat bot Discord atau Telegram untuk cek saldo
+- memantau invoice secara otomatis
+- membaca daftar order milik akun sendiri
+- mengecek status transaksi tanpa login dashboard
+- membuat dashboard monitoring pribadi
+- menghubungkan akun LeuwongRR ke sistem eksternal milik user
 
-> User API hanya bisa membaca data milik akun pemilik token. Token user tidak bisa membaca invoice atau order milik user lain.
+> API ini bersifat **user-only**. Token hanya bisa membaca data milik akun yang membuat token tersebut.
 
 ---
 
 ## Kenapa Pakai User API?
 
-| Benefit | Keterangan |
-|---|---|
-| Cepat | Cek invoice/order langsung dari sistem kamu |
-| Aman | Token hanya membaca data milik akun sendiri |
-| Fleksibel | Bisa dipakai untuk website, bot, atau dashboard |
-| Developer friendly | REST API, JSON response, Bearer Token |
-| Siap integrasi | Cocok untuk workflow otomatis user |
+### Aman
+
+Setiap request menggunakan **User API Token**. Token hanya memiliki akses ke data milik akun sendiri, bukan data user lain.
+
+### Praktis
+
+User tidak perlu membuka dashboard manual hanya untuk mengecek saldo, order, invoice, atau status transaksi.
+
+### Mudah Diintegrasikan
+
+Endpoint dibuat sederhana dan cocok digunakan di:
+
+- website pribadi
+- bot Discord
+- bot Telegram
+- dashboard monitoring
+- tools internal sederhana
+- sistem notifikasi invoice
+
+### Bisa Langsung Dicoba
+
+Dokumentasi menggunakan Mintlify dan mendukung API Playground, sehingga endpoint bisa langsung dites dari halaman docs.
 
 ---
 
-## Endpoint User API
+## Fitur User API
 
-```txt
-GET /api/v1/health
-GET /api/v1/me
-GET /api/v1/me/balance
-GET /api/v1/me/orders
-GET /api/v1/me/orders/{invoice}
-GET /api/v1/me/invoices/{invoice}
-GET /api/v1/me/invoices/{invoice}/status
-```
+### Akun
 
-Base URL:
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/me` | Mengambil informasi akun user |
+| `GET` | `/api/v1/me/dashboard-summary` | Mengambil ringkasan dashboard user |
 
-```txt
-https://leuwongrr.online
-```
+### Saldo
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/me/balance` | Mengecek saldo akun user |
+| `GET` | `/api/v1/me/balance/transactions` | Melihat riwayat mutasi saldo user |
+
+### Order
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/me/orders` | Mengambil daftar order milik user |
+| `GET` | `/api/v1/me/orders/{invoice}` | Mengambil detail order berdasarkan invoice |
+
+### Invoice
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/me/invoices/{invoice}` | Mengambil detail invoice milik user |
+| `GET` | `/api/v1/me/invoices/{invoice}/status` | Mengecek status invoice secara cepat |
+
+### Deposit
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/me/deposits` | Mengambil daftar deposit user |
+| `GET` | `/api/v1/me/deposits/{invoice}` | Mengambil detail deposit berdasarkan invoice |
+
+### Status API
+
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/v1/health` | Mengecek status API |
 
 ---
 
-## Mulai Dalam 4 Langkah
+## Contoh Penggunaan
 
-### 1. Login ke LeuwongRR
-
-```txt
-https://leuwongrr.online/login
-```
-
-### 2. Buka User API Access
-
-```txt
-https://leuwongrr.online/user/api-access
-```
-
-### 3. Generate API Token
-
-Buat token dari dashboard member, lalu simpan token dengan aman.
-
-### 4. Kirim Request Pertama
+### Cek Saldo User
 
 ```bash
-curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
-  -H "Accept: application/json" \
-  https://leuwongrr.online/api/v1/me
+curl --request GET \
+  --url https://leuwongrr.online/api/v1/me/balance \
+  --header 'Authorization: Bearer USER_API_TOKEN' \
+  --header 'Accept: application/json'
 ```
 
----
-
-## Contoh Cek Saldo
-
-```bash
-curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
-  -H "Accept: application/json" \
-  https://leuwongrr.online/api/v1/me/balance
-```
-
-Contoh hasil:
+### Contoh Response
 
 ```json
 {
@@ -101,106 +124,185 @@ Contoh hasil:
   "message": "OK",
   "data": {
     "balance": {
-      "amount": 25000,
-      "formatted": "Rp25.000",
+      "amount": 15666,
+      "formatted": "Rp15.666",
       "currency": "IDR"
     },
-    "updated_at": "2026-04-29T09:30:00+07:00"
+    "updated_at": "2026-04-29 15:26:40"
   }
 }
 ```
 
 ---
 
-## Contoh Cek Status Invoice
+## Authentication
 
-```bash
-curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
-  -H "Accept: application/json" \
-  https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+Semua endpoint user membutuhkan **Bearer Token**.
+
+Format header:
+
+```http
+Authorization: Bearer USER_API_TOKEN
+Accept: application/json
 ```
 
-Contoh hasil:
+Token bisa dibuat melalui halaman:
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+> Simpan token dengan aman. Jangan membagikan token ke orang lain atau menaruh token di tempat publik.
+
+---
+
+## Mulai Dalam 3 Langkah
+
+### 1. Login ke Akun LeuwongRR
+
+Masuk ke akun member melalui:
+
+```txt
+https://leuwongrr.online/login
+```
+
+### 2. Buat User API Token
+
+Buka halaman User API Access:
+
+```txt
+https://leuwongrr.online/user/api-access
+```
+
+Generate token baru dan simpan token tersebut.
+
+### 3. Gunakan Token di Request API
+
+Gunakan token pada header request:
+
+```http
+Authorization: Bearer USER_API_TOKEN
+```
+
+---
+
+## Cocok Untuk
+
+LeuwongRR User API cocok untuk user yang ingin membuat:
+
+- dashboard saldo pribadi
+- bot cek saldo
+- bot cek invoice
+- dashboard monitoring order
+- sistem notifikasi transaksi
+- integrasi website pribadi
+- tools otomatisasi ringan
+
+---
+
+## Batasan Akses
+
+User API hanya digunakan untuk membaca data milik akun sendiri.
+
+API ini **tidak menyediakan**:
+
+- endpoint admin
+- endpoint internal
+- akses data user lain
+- webhook payment internal
+- fitur edit data sensitif
+- fitur ubah password
+- fitur manajemen akun user lain
+
+Semua endpoint publik di dokumentasi ini dirancang agar tetap aman untuk penggunaan user/member.
+
+---
+
+## Response Umum
+
+### Success
 
 ```json
 {
   "success": true,
   "message": "OK",
-  "data": {
-    "invoice": {
-      "invoice_code": "INV20260429113629619",
-      "type": "order",
-      "payment_status": "paid"
-    }
-  }
+  "data": {}
+}
+```
+
+### Unauthorized
+
+```json
+{
+  "success": false,
+  "message": "Unauthenticated."
+}
+```
+
+### Too Many Requests
+
+```json
+{
+  "success": false,
+  "message": "Too many requests."
 }
 ```
 
 ---
 
-## Use Case Bot Discord
+## Rate Limit
 
-User menjalankan command:
+API memiliki rate limit untuk menjaga performa dan stabilitas layanan.
 
-```txt
-/cek_invoice INV20260429113629619
-```
+Gunakan API secara wajar dan hindari request berulang terlalu cepat.
 
-Bot kamu request ke LeuwongRR User API, lalu menampilkan:
+Detail rate limit bisa dilihat di dokumentasi:
 
 ```txt
-Invoice: INV20260429113629619
-Status: paid
-Type: order
-```
-
----
-
-## Keamanan Token
-
-Jangan simpan token di:
-
-- HTML publik
-- JavaScript frontend
-- GitHub public repository
-- URL query seperti `?token=`
-- Chat publik
-- Screenshot publik
-
-Simpan token di:
-
-- File `.env`
-- Backend website
-- Server bot
-- Secret manager
-- Environment variable hosting
-
-Pola yang benar:
-
-```txt
-Website / Bot User
-        ↓
-Backend / Server User
-        ↓ Authorization: Bearer USER_API_TOKEN
-LeuwongRR User API
+https://docs.leuwongrr.online
 ```
 
 ---
 
 ## Dokumentasi Lengkap
 
-Buka dokumentasi resmi:
+Dokumentasi lengkap tersedia di:
 
 ```txt
 https://docs.leuwongrr.online
 ```
 
-Di sana kamu bisa membaca panduan lengkap, melihat daftar endpoint, dan mencoba request melalui Mintlify Playground.
+Di sana kamu bisa melihat:
+
+- panduan mulai
+- cara membuat token
+- authentication
+- daftar endpoint
+- contoh request
+- contoh response
+- rate limits
+- error response
+- API Playground
 
 ---
 
-## Siap Integrasi?
+## Keamanan Token
 
-Buat User API Token dari dashboard member dan mulai hubungkan akun LeuwongRR kamu ke website atau bot pribadi.
+Agar akun tetap aman:
 
-[🚀 Buat User API Token](https://leuwongrr.online/user/api-access)
+- jangan share token API ke orang lain
+- jangan upload token ke GitHub
+- jangan taruh token langsung di frontend publik
+- gunakan token hanya di server/backend pribadi
+- regenerate token jika token pernah terlihat publik
+- hapus token yang sudah tidak digunakan
+
+---
+
+## Siap Mulai?
+
+Gunakan LeuwongRR User API untuk menghubungkan akun kamu ke website, bot, atau dashboard pribadi dengan cara yang lebih praktis, aman, dan mudah.
+
+[📘 Buka Dokumentasi](https://docs.leuwongrr.online)  
+[🔑 Buat API Token](https://leuwongrr.online/user/api-access)  
+[🌐 Kunjungi LeuwongRR](https://leuwongrr.online)
