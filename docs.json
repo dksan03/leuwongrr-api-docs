@@ -7,33 +7,22 @@
     "light": "#7eff2f",
     "dark": "#7eff2f"
   },
-  "favicon": "/favicon.png",
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "authentication",
-              "user-api-access",
-              "errors"
-            ]
-          }
+        "group": "Guides",
+        "pages": [
+          "introduction",
+          "quickstart",
+          "authentication",
+          "user-api-access",
+          "errors"
         ]
       },
       {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "REST API v1",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          }
+        "group": "API Reference",
+        "pages": [
+          "api-reference/introduction"
         ]
       }
     ]
