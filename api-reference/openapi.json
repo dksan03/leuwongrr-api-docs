@@ -1166,6 +1166,16 @@
               "type": "string",
               "example": "discord-123456789-order-001"
             }
+          },
+          {
+            "name": "X-Discord-User-ID",
+            "in": "header",
+            "required": false,
+            "description": "Wajib dikirim jika payment_method=balance dari Discord bot. Isinya Discord user ID yang sudah terhubung ke akun web pemilik User API Token. Tidak diperlukan untuk payment_method=invoice/gateway.",
+            "schema": {
+              "type": "string",
+              "example": "1262024148939440249"
+            }
           }
         ],
         "x-mint": {
@@ -1211,8 +1221,8 @@
                   },
                   "payment_method": {
                     "type": "string",
-                    "description": "Gunakan invoice untuk testing aman. Bisa memakai kode metode pembayaran gateway yang aktif jika tersedia.",
-                    "example": "invoice"
+                    "description": "Default invoice. Gunakan balance hanya dari Discord bot yang sudah link akun web dan wajib menyertakan header X-Discord-User-ID. Sandbox hanya boleh invoice.",
+                    "example": "balance"
                   },
                   "client_reference": {
                     "type": "string",
