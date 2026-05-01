@@ -1,0 +1,79 @@
+---
+title: Security User-Only
+description: Kebijakan keamanan publik untuk LeuwongRR User API.
+---
+
+# Security User-Only
+
+LeuwongRR User API dibuat untuk integrasi member/user. Dokumentasi publik hanya memuat endpoint yang aman untuk user dan endpoint publik ringan.
+
+## Kebijakan akses
+
+- Endpoint transaksi memakai pola `/api/v1/me/*` dan selalu membaca akun dari User API Token.
+- Token member tidak bisa dipakai untuk membaca data user lain.
+- Request user tidak boleh menentukan `user_id`, email, role, harga, total transaksi, status, atau payload provider.
+- Endpoint legacy server-token tidak digunakan untuk dokumentasi publik dan transaksi user diarahkan ke `/api/v1/me/orders`.
+- Response user tidak menampilkan credential, secret, konfigurasi server, payload provider mentah, atau route operasional.
+
+## Simpan token dengan benar
+
+<Warning>
+Jangan simpan User API Token di JavaScript publik, HTML publik, URL query, repository publik, atau screenshot.
+</Warning>
+
+Simpan token di salah satu tempat berikut:
+
+```txt
+.env server pribadi
+secret manager
+environment variable bot
+backend config yang tidak ikut dipublish
+```
+
+## Header resmi
+
+```http
+Authorization: Bearer USER_API_TOKEN
+Accept: application/json
+```
+
+Header cadangan:
+
+```http
+X-User-API-Token: USER_API_TOKEN
+```
+
+## Endpoint yang aman dipublikasi
+
+```txt
+GET  /api/v1/health
+POST /api/v1/auth/token/validate
+GET  /api/v1/catalog/robux-packages
+GET  /api/v1/catalog/payment-methods
+GET  /api/v1/articles
+GET  /api/v1/articles/{slug}
+GET  /api/v1/me
+GET  /api/v1/me/dashboard-summary
+GET  /api/v1/me/balance
+GET  /api/v1/me/balance/transactions
+GET  /api/v1/me/deposits
+GET  /api/v1/me/deposits/{invoice}
+POST /api/v1/me/orders
+GET  /api/v1/me/orders
+GET  /api/v1/me/orders/{invoice}
+GET  /api/v1/me/invoices/{invoice}
+GET  /api/v1/me/invoices/{invoice}/status
+```
+
+## Rotasi token
+
+Cabut dan buat token baru ketika:
+
+- token pernah tertempel di frontend/repository;
+- server/bot pindah device;
+- developer eksternal sudah tidak ikut mengelola integrasi;
+- ada aktivitas tidak dikenal di dashboard member.
+
+## Prinsip publikasi docs
+
+Dokumentasi publik tidak memuat materi area privileged, credential provider, callback sistem, maintenance, debug, konfigurasi server, atau catatan operasional internal.

@@ -1,10 +1,12 @@
 # Deploy Patch LeuwongRR User API Docs
 
+Patch ini berisi dokumentasi REST API v1 yang fokus ke **public safe endpoint** dan **User API**. Route operasional, credential provider, callback sistem, maintenance, debug, dan konfigurasi server tidak dimasukkan ke dokumentasi publik.
+
 ## 1. Replace / update files
 
-Copy semua file ini ke root repo `dksan03/leuwongrr-api-docs`.
+Copy semua file ini ke root repo `leuwongrr-api-docs`.
 
-Struktur final:
+Struktur final utama:
 
 ```txt
 .
@@ -14,6 +16,10 @@ Struktur final:
 ├── quickstart.mdx
 ├── authentication.mdx
 ├── user-api-access.mdx
+├── available-features.mdx
+├── balance.mdx
+├── create-order-api.mdx
+├── sandbox-production-keys.mdx
 ├── rate-limits.mdx
 ├── errors.mdx
 └── api-reference
@@ -21,7 +27,7 @@ Struktur final:
     └── openapi.json
 ```
 
-Folder `snippets/` hanya referensi, tidak wajib ikut deploy.
+Folder `snippets/` hanya referensi lama, tidak wajib ikut deploy.
 
 ## 2. Validate JSON
 
@@ -36,7 +42,7 @@ node -e "JSON.parse(require('fs').readFileSync('api-reference/openapi.json','utf
 mint validate
 ```
 
-Atau jalankan preview lokal:
+Atau preview lokal:
 
 ```bash
 mint dev
@@ -46,7 +52,7 @@ mint dev
 
 ```bash
 git add .
-git commit -m "docs: user-only API reference and playground"
+git commit -m "docs: publish user-only REST API reference"
 git push origin main
 ```
 
@@ -58,17 +64,13 @@ Buka:
 https://docs.leuwongrr.online
 ```
 
-Lalu cek group:
-
-```txt
-Endpoint User API
-```
-
 Test urutan:
 
 1. `GET /api/v1/health` tanpa token
-2. `GET /api/v1/me` dengan User API Token
-3. `GET /api/v1/me/invoices/{invoice}/status` dengan invoice milik token
+2. `POST /api/v1/auth/token/validate` dengan User API Token
+3. `GET /api/v1/me` dengan User API Token
+4. `GET /api/v1/me/balance` dengan User API Token
+5. `GET /api/v1/me/invoices/{invoice}/status` dengan invoice milik token
 
 ## 6. CORS note
 
@@ -92,21 +94,9 @@ Lalu terapkan CORS allowlist untuk:
 https://docs.leuwongrr.online
 ```
 
-## Validasi Endpoint Saldo
+## 7. Anti bocor akses privileged
 
-Setelah deploy backend dan docs, test endpoint berikut:
-
-```bash
-curl -X GET "https://leuwongrr.online/api/v1/me/balance" \
-  -H "Authorization: Bearer USER_API_TOKEN" \
-  -H "Accept: application/json"
-```
-
-Pastikan response hanya menampilkan saldo milik token yang dipakai, bukan saldo user lain.
-
-## Anti Bentrok
-
-- File docs di patch ini adalah full replacement untuk repo docs Mintlify.
-- Snippet Laravel di folder `snippets/` hanya contoh, jangan disalin mentah kalau nama middleware/controller berbeda.
-- Jangan menambahkan endpoint admin/internal ke `api-reference/openapi.json`.
-- Jalankan `mint validate` sebelum push.
+- Jangan menambahkan route operasional, credential provider, callback sistem, debug, maintenance, atau konfigurasi server ke `api-reference/openapi.json`.
+- Jangan menampilkan path privileged di README, MDX, atau response endpoint discovery publik.
+- Semua endpoint user sebaiknya memakai pola `/api/v1/me/...`.
+- Jangan membuat endpoint publik berbasis `user_id`, email, role, harga, total, atau status.

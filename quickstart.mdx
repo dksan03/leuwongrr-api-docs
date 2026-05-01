@@ -25,10 +25,10 @@ https://leuwongrr.online/user/api-access
 
 ## 3. Generate User API Token
 
-Klik tombol generate token, lalu simpan token di tempat aman.
+Buat token mode **Sandbox** untuk testing atau **Production** untuk integrasi live.
 
 <Warning>
-Jangan simpan token di HTML publik, JavaScript frontend, GitHub public repository, URL query, atau chat publik.
+Jangan simpan token di HTML publik, JavaScript frontend, GitHub public repository, URL query, screenshot, atau chat publik.
 </Warning>
 
 ## 4. Test health endpoint
@@ -52,9 +52,17 @@ Contoh response:
 }
 ```
 
-## 5. Test token user
+## 5. Validate token
 
-Gunakan token melalui header `Authorization`.
+Gunakan endpoint validasi token untuk memastikan token aktif.
+
+```bash
+curl -X POST "https://leuwongrr.online/api/v1/auth/token/validate" \
+  -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json"
+```
+
+## 6. Test profil user
 
 ```bash
 curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
@@ -78,7 +86,7 @@ Contoh response:
 }
 ```
 
-## 6. Cek saldo user
+## 7. Cek saldo user
 
 ```bash
 curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
@@ -98,18 +106,17 @@ Contoh response:
       "formatted": "Rp25.000",
       "currency": "IDR"
     },
-    "updated_at": "2026-04-29T09:30:00+07:00"
+    "updated_at": "2026-04-29 09:30:00"
   }
 }
 ```
 
-## 7. Cek status invoice
-
+## 8. Cek status invoice
 
 ```bash
 curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
   -H "Accept: application/json" \
-  https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+  https://leuwongrr.online/api/v1/me/invoices/INV202605010001/status
 ```
 
 ## Checklist integrasi
@@ -117,6 +124,6 @@ curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
 - Token dibuat dari halaman User API Access
 - Token dikirim lewat header, bukan URL
 - Request dilakukan dari backend/server/bot
-- Endpoint yang digunakan hanya endpoint user
+- Endpoint yang digunakan hanya public safe endpoint dan endpoint `/me`
 - Saldo dicek melalui `/api/v1/me/balance`, bukan endpoint berbasis `user_id`
-- Sistem menangani error `401`, `404`, dan `429`
+- Sistem menangani error `401`, `403`, `404`, `422`, dan `429`

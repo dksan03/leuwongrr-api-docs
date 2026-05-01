@@ -46,7 +46,7 @@ curl -X GET "https://leuwongrr.online/api/v1/me/balance" \
       "formatted": "Rp25.000",
       "currency": "IDR"
     },
-    "updated_at": "2026-04-29T09:30:00+07:00"
+    "updated_at": "2026-04-29 09:30:00"
   }
 }
 ```
@@ -64,6 +64,6 @@ curl -X GET "https://leuwongrr.online/api/v1/me/balance" \
 | Status | Arti |
 |---:|---|
 | `401` | Token tidak dikirim, salah, atau sudah dicabut |
+| `403` | Akun pemilik token tidak memenuhi syarat akses |
 | `429` | Terlalu banyak request dalam waktu singkat |
 | `500` | Terjadi error di server |
-

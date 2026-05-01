@@ -13,15 +13,19 @@ https://leuwongrr.online/user/api-access
 
 ## Fungsi User API Token
 
-Token ini dipakai untuk membaca data milik akun sendiri melalui LeuwongRR User API.
+Token ini dipakai untuk membaca dan memproses data milik akun sendiri melalui LeuwongRR User API.
 
 Dengan token ini, kamu bisa:
 
 - Cek profil akun sendiri
+- Cek saldo akun sendiri
+- Melihat mutasi saldo sendiri
 - Melihat daftar order sendiri
 - Cek detail order berdasarkan invoice
 - Cek detail invoice sendiri
 - Cek status pembayaran invoice
+- Melihat daftar deposit sendiri
+- Membuat order dari backend/bot pribadi
 - Menghubungkan akun ke website atau bot pribadi
 
 ## Hak akses token
@@ -31,19 +35,23 @@ Token user hanya berlaku untuk data milik akun pembuat token.
 | Akses | Status |
 |---|---|
 | Cek profil sendiri | Diizinkan |
+| Cek saldo sendiri | Diizinkan |
 | Cek order sendiri | Diizinkan |
 | Cek invoice sendiri | Diizinkan |
+| Cek deposit sendiri | Diizinkan |
+| Buat order untuk akun sendiri | Diizinkan |
 | Cek invoice user lain | Tidak diizinkan |
-| Akses endpoint admin | Tidak diizinkan |
-| Ubah data sistem | Tidak diizinkan |
+| Ubah konfigurasi sistem | Tidak diizinkan |
+| Manipulasi harga/status transaksi | Tidak diizinkan |
 
 ## Cara membuat token
 
 1. Login ke LeuwongRR
 2. Buka halaman User API Access
-3. Klik generate token
-4. Salin token yang muncul
-5. Simpan token di backend/server/bot kamu
+3. Pilih mode token: **Sandbox** atau **Production**
+4. Klik generate token
+5. Salin token yang muncul
+6. Simpan token di backend/server/bot kamu
 
 ## Cara memakai token
 
@@ -58,7 +66,7 @@ curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
 User mengetik:
 
 ```txt
-/cek_invoice INV20260429113629619
+/cek_invoice INV202605010001
 ```
 
 Backend bot melakukan request:
@@ -66,13 +74,13 @@ Backend bot melakukan request:
 ```bash
 curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
   -H "Accept: application/json" \
-  https://leuwongrr.online/api/v1/me/invoices/INV20260429113629619/status
+  https://leuwongrr.online/api/v1/me/invoices/INV202605010001/status
 ```
 
 Bot menampilkan hasil:
 
 ```txt
-Invoice: INV20260429113629619
+Invoice: INV202605010001
 Status: paid
 Type: order
 ```
@@ -84,7 +92,6 @@ Type: order
 - Batasi request otomatis agar tidak terkena rate limit
 - Gunakan retry dengan jeda saat menerima `429`
 - Regenerate token jika server kamu pernah bocor
-
 
 ## Sandbox dan Production API Key
 

@@ -1,30 +1,60 @@
 ---
-title: Fitur API Ringan
-description: Endpoint tambahan yang aman dan cocok dipakai user, bot, website, atau dashboard ringan.
+title: Available Features
+description: Fitur REST API v1 yang aman untuk user, bot, website, dan dashboard ringan.
 ---
 
-# Fitur API Ringan
+# Available Features
 
-Endpoint di bawah ini dipilih karena ringan, aman untuk user, dan tidak membuka akses admin/internal.
+Endpoint di bawah ini dipilih karena ringan, aman untuk user, dan tidak membuka akses privileged atau data operasional sensitif.
 
-## Endpoint Public
+## Endpoint public aman
 
 Endpoint ini tidak memerlukan User API Token:
 
-- `GET /api/v1/catalog/robux-packages`
-- `GET /api/v1/catalog/payment-methods`
-- `GET /api/v1/articles`
-- `GET /api/v1/articles/{slug}`
+| Endpoint | Fungsi |
+|---|---|
+| `GET /api/v1/health` | Cek status API v1 |
+| `GET /api/v1/catalog/robux-packages` | Daftar paket Robux aktif |
+| `GET /api/v1/catalog/payment-methods` | Daftar metode pembayaran aktif yang aman ditampilkan |
+| `GET /api/v1/articles` | Daftar artikel publik |
+| `GET /api/v1/articles/{slug}` | Detail artikel publik |
 
-## Endpoint User
+## Endpoint token utility
 
-Endpoint ini wajib memakai User API Token:
+| Endpoint | Fungsi |
+|---|---|
+| `POST /api/v1/auth/token/validate` | Validasi User API Token dan mode token |
 
-- `GET /api/v1/me/dashboard-summary`
-- `GET /api/v1/me/balance/transactions`
-- `GET /api/v1/me/deposits`
-- `GET /api/v1/me/deposits/{invoice}`
+## Endpoint user-only
+
+Endpoint ini wajib memakai User API Token dan hanya membaca/memproses data milik pemilik token:
+
+| Endpoint | Fungsi |
+|---|---|
+| `GET /api/v1/me` | Profil akun pemilik token |
+| `GET /api/v1/me/dashboard-summary` | Ringkasan dashboard user |
+| `GET /api/v1/me/balance` | Saldo user |
+| `GET /api/v1/me/balance/transactions` | Mutasi saldo user |
+| `GET /api/v1/me/deposits` | Daftar deposit user |
+| `GET /api/v1/me/deposits/{invoice}` | Detail deposit user |
+| `POST /api/v1/me/orders` | Buat order dari akun pemilik token |
+| `GET /api/v1/me/orders` | Daftar order user |
+| `GET /api/v1/me/orders/{invoice}` | Detail order user |
+| `GET /api/v1/me/invoices/{invoice}` | Detail invoice user |
+| `GET /api/v1/me/invoices/{invoice}/status` | Status invoice user |
 
 <Warning>
-Endpoint admin, internal, webhook, payment callback, dan pengaturan sistem tidak dimasukkan ke dokumentasi publik.
+Dokumentasi publik ini tidak memuat route operasional, credential provider, callback sistem, maintenance, debug, atau konfigurasi server.
 </Warning>
+
+## Fitur website yang bisa diintegrasikan
+
+- Cek saldo akun
+- Cek mutasi saldo
+- Lihat dashboard summary
+- Lihat katalog paket Robux
+- Lihat metode pembayaran aktif
+- Lihat riwayat order dan deposit
+- Cek invoice dan status pembayaran
+- Buat order melalui backend/bot dengan validasi server-side
+- Ambil artikel publik untuk halaman informasi/SEO

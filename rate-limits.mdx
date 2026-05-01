@@ -16,7 +16,7 @@ Rate limit membantu mencegah:
 - Akses mencurigakan dari sistem eksternal
 
 <Note>
-Rate limit berlaku untuk User API Token yang dibuat dari halaman `https://leuwongrr.online/user/api-access`.
+Rate limit berlaku untuk request public safe endpoint dan User API Token yang dibuat dari halaman `https://leuwongrr.online/user/api-access`.
 </Note>
 
 ## Batas request user API
@@ -25,30 +25,38 @@ Untuk penggunaan normal, batas berikut aman untuk website, bot, atau dashboard s
 
 | Jenis limit | Batas rekomendasi |
 |---|---:|
-| Request per menit | 60 request / menit |
-| Request per jam | 1.000 request / jam |
+| Public read endpoint | 60 request / menit |
+| User read endpoint | 60 request / menit |
+| Create order endpoint | 10 request / menit |
+| Token validate endpoint | 30 request / menit |
 | Request paralel | Maksimal 2–3 request bersamaan |
 | Token lewat URL | Tidak diizinkan |
 | Token lewat header | Wajib |
 
 <Warning>
-Jangan melakukan polling setiap 1 detik. Request terlalu agresif dapat terkena `429 Too Many Requests`.
+Jangan polling setiap 1 detik. Request terlalu agresif dapat terkena `429 Too Many Requests`.
 </Warning>
 
 ## Endpoint yang dihitung rate limit
 
 ```txt
-GET /api/v1/me
-GET /api/v1/me/orders
-GET /api/v1/me/orders/{invoice}
-GET /api/v1/me/invoices/{invoice}
-GET /api/v1/me/invoices/{invoice}/status
-```
-
-Endpoint berikut dapat digunakan untuk pengecekan ringan:
-
-```txt
-GET /api/v1/health
+GET  /api/v1/health
+POST /api/v1/auth/token/validate
+GET  /api/v1/catalog/robux-packages
+GET  /api/v1/catalog/payment-methods
+GET  /api/v1/articles
+GET  /api/v1/articles/{slug}
+GET  /api/v1/me
+GET  /api/v1/me/dashboard-summary
+GET  /api/v1/me/balance
+GET  /api/v1/me/balance/transactions
+GET  /api/v1/me/deposits
+GET  /api/v1/me/deposits/{invoice}
+POST /api/v1/me/orders
+GET  /api/v1/me/orders
+GET  /api/v1/me/orders/{invoice}
+GET  /api/v1/me/invoices/{invoice}
+GET  /api/v1/me/invoices/{invoice}/status
 ```
 
 ## Response jika terkena rate limit
@@ -96,6 +104,7 @@ Jika menerima status `429`, tunggu sesuai nilai `Retry-After` sebelum mencoba la
 |---|---:|
 | Cek status invoice | Setiap 10–30 detik |
 | Cek daftar order | Setiap 30–60 detik |
+| Cek saldo | Saat halaman dibuka atau setiap 30–60 detik |
 | Cek profil `/me` | Saat login / saat halaman dibuka |
 | Bot command manual | Saat user menjalankan command |
 | Auto refresh dashboard | Minimal 15–30 detik |

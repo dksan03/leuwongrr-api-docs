@@ -22,12 +22,30 @@ curl -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
   https://leuwongrr.online/api/v1/me
 ```
 
+## Validate token
+
+Gunakan endpoint berikut untuk mengecek apakah token masih aktif dan dapat dipakai.
+
+```http
+POST /api/v1/auth/token/validate
+```
+
+```bash
+curl -X POST "https://leuwongrr.online/api/v1/auth/token/validate" \
+  -H "Authorization: Bearer YOUR_USER_API_TOKEN" \
+  -H "Accept: application/json"
+```
+
 ## Endpoint public
 
 Endpoint berikut tidak membutuhkan token:
 
 ```txt
 GET /api/v1/health
+GET /api/v1/catalog/robux-packages
+GET /api/v1/catalog/payment-methods
+GET /api/v1/articles
+GET /api/v1/articles/{slug}
 ```
 
 ## Endpoint dengan token
@@ -35,11 +53,18 @@ GET /api/v1/health
 Endpoint berikut wajib memakai User API Token:
 
 ```txt
-GET /api/v1/me
-GET /api/v1/me/orders
-GET /api/v1/me/orders/{invoice}
-GET /api/v1/me/invoices/{invoice}
-GET /api/v1/me/invoices/{invoice}/status
+POST /api/v1/auth/token/validate
+GET  /api/v1/me
+GET  /api/v1/me/dashboard-summary
+GET  /api/v1/me/balance
+GET  /api/v1/me/balance/transactions
+GET  /api/v1/me/deposits
+GET  /api/v1/me/deposits/{invoice}
+POST /api/v1/me/orders
+GET  /api/v1/me/orders
+GET  /api/v1/me/orders/{invoice}
+GET  /api/v1/me/invoices/{invoice}
+GET  /api/v1/me/invoices/{invoice}/status
 ```
 
 ## Keamanan token
@@ -59,8 +84,7 @@ Jangan simpan token di:
 
 Simpan token di:
 
-- File `.env`
-- Backend website
+- File `.env` backend
 - Server bot
 - Secret manager
 - Environment variable hosting

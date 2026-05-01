@@ -1,16 +1,14 @@
 ---
 title: Introduction
-description: Dokumentasi publik LeuwongRR User API khusus untuk member/user.
+description: Dokumentasi publik LeuwongRR User API khusus member/user.
 ---
 
 # LeuwongRR User API
 
-LeuwongRR User API adalah REST API publik khusus member untuk membaca data milik akun sendiri secara aman.
-
-Dengan API ini, user dapat menghubungkan akun LeuwongRR ke website pribadi, bot Discord, bot Telegram, dashboard monitoring, atau sistem cek invoice otomatis.
+LeuwongRR User API adalah REST API publik khusus member untuk menghubungkan data akun sendiri ke website pribadi, bot Discord, bot Telegram, dashboard monitoring, atau sistem cek invoice otomatis.
 
 <Note>
-Dokumentasi ini hanya membahas endpoint user. Endpoint admin, internal, maintenance, debug, dan sistem operasional LeuwongRR tidak ditampilkan di dokumentasi publik.
+Dokumentasi ini hanya menampilkan endpoint yang aman untuk user/member. Endpoint operasional, privileged, credential provider, callback sistem, debug, dan maintenance tidak dimasukkan ke dokumentasi publik.
 </Note>
 
 ## Base URL
@@ -19,38 +17,66 @@ Dokumentasi ini hanya membahas endpoint user. Endpoint admin, internal, maintena
 https://leuwongrr.online
 ```
 
+## Prinsip user-only
+
+User API Token hanya berlaku untuk akun pemilik token. Semua endpoint `/me` otomatis mengambil user dari token, bukan dari parameter `user_id`, email, role, harga, atau status yang dikirim client.
+
 ## Endpoint yang tersedia
 
+### Public safe endpoints
+
+Endpoint berikut aman dibuka tanpa token karena hanya menampilkan informasi publik ringan:
+
 ```txt
-GET /api/v1/health
-GET /api/v1/me
-GET /api/v1/me/balance
-GET /api/v1/me/orders
-GET /api/v1/me/orders/{invoice}
-GET /api/v1/me/invoices/{invoice}
-GET /api/v1/me/invoices/{invoice}/status
+GET  /api/v1/health
+GET  /api/v1/catalog/robux-packages
+GET  /api/v1/catalog/payment-methods
+GET  /api/v1/articles
+GET  /api/v1/articles/{slug}
+```
+
+### Token utility
+
+```txt
+POST /api/v1/auth/token/validate
+```
+
+### User endpoints
+
+Endpoint berikut wajib menggunakan User API Token:
+
+```txt
+GET  /api/v1/me
+GET  /api/v1/me/dashboard-summary
+GET  /api/v1/me/balance
+GET  /api/v1/me/balance/transactions
+GET  /api/v1/me/deposits
+GET  /api/v1/me/deposits/{invoice}
+POST /api/v1/me/orders
+GET  /api/v1/me/orders
+GET  /api/v1/me/orders/{invoice}
+GET  /api/v1/me/invoices/{invoice}
+GET  /api/v1/me/invoices/{invoice}/status
 ```
 
 ## Cocok untuk
 
 | Kebutuhan | Contoh penggunaan |
 |---|---|
-| Website pribadi | Menampilkan status invoice/order user sendiri |
-| Bot Discord | Command `/cek_invoice` |
-| Bot Telegram | Cek status pembayaran otomatis |
-| Dashboard | Monitoring order milik akun sendiri |
-| Sistem reseller | Tracking invoice tanpa membuka dashboard manual |
+| Website pribadi | Menampilkan saldo, status invoice, dan riwayat order akun sendiri |
+| Bot Discord | Command `/saldo`, `/cek_invoice`, atau `/order_robux` |
+| Bot Telegram | Cek status pembayaran dan order otomatis |
+| Dashboard | Monitoring transaksi milik akun sendiri |
+| Sistem reseller | Tracking order tanpa membuka dashboard manual |
 
 ## Batas akses
-
-User API Token hanya dapat membaca data milik pemilik token.
 
 Token user tidak dapat digunakan untuk:
 
 - Membaca data user lain
-- Mengakses endpoint admin
 - Mengubah konfigurasi sistem
-- Membuka data internal LeuwongRR
+- Mengakses area privileged/operasional
+- Mengirim harga, status, atau total transaksi sendiri
 - Melewati validasi kepemilikan invoice/order
 
 ## Alur aman integrasi
@@ -63,7 +89,7 @@ Backend / Server User
 LeuwongRR User API
 ```
 
-Jangan memanggil API langsung dari frontend browser jika token akan terlihat oleh publik.
+Jangan memanggil API langsung dari frontend browser jika token akan terlihat publik.
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/quickstart">
@@ -72,10 +98,10 @@ Jangan memanggil API langsung dari frontend browser jika token akan terlihat ole
   <Card title="Authentication" icon="key" href="/authentication">
     Pelajari cara memakai User API Token.
   </Card>
-  <Card title="Rate Limits" icon="gauge" href="/rate-limits">
-    Batas request dan cara menangani 429.
+  <Card title="Available Features" icon="sparkles" href="/available-features">
+    Lihat fitur publik aman dan fitur user-only.
   </Card>
   <Card title="API Reference" icon="code" href="/api-reference/introduction">
-    Lihat daftar endpoint user-only.
+    Lihat daftar endpoint REST API v1.
   </Card>
 </CardGroup>

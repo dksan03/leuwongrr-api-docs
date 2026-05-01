@@ -36,10 +36,12 @@
           "introduction",
           "quickstart",
           "authentication",
+          "security-user-only",
           "user-api-access",
-          "balance",
           "available-features",
+          "balance",
           "create-order-api",
+          "sandbox-production-keys",
           "rate-limits",
           "errors"
         ]
@@ -51,10 +53,21 @@
         ]
       },
       {
-        "group": "Endpoint User API",
+        "group": "Endpoint Publik Aman",
         "openapi": "api-reference/openapi.json",
         "pages": [
           "GET /api/v1/health",
+          "POST /api/v1/auth/token/validate",
+          "GET /api/v1/catalog/robux-packages",
+          "GET /api/v1/catalog/payment-methods",
+          "GET /api/v1/articles",
+          "GET /api/v1/articles/{slug}"
+        ]
+      },
+      {
+        "group": "Endpoint User API",
+        "openapi": "api-reference/openapi.json",
+        "pages": [
           "GET /api/v1/me",
           "GET /api/v1/me/dashboard-summary",
           "GET /api/v1/me/balance",

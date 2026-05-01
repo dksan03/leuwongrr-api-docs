@@ -8,7 +8,7 @@ description: Panduan membuat order user lewat User API secara aman.
 Endpoint ini digunakan untuk membuat order baru milik akun pemilik User API Token.
 
 <Warning>
-Gunakan endpoint ini dengan hati-hati. Order yang valid akan membuat invoice/order baru di LeuwongRR. Untuk testing aman, gunakan `payment_method: invoice`.
+Gunakan endpoint ini dengan hati-hati. Order yang valid akan membuat invoice/order baru di LeuwongRR. Untuk testing aman, gunakan Sandbox API Key dan `payment_method: invoice`.
 </Warning>
 
 ## Endpoint
@@ -23,7 +23,7 @@ POST /api/v1/me/orders
 Authorization: Bearer USER_API_TOKEN
 Accept: application/json
 Content-Type: application/json
-Idempotency-Key: unique-order-key-001
+Idempotency-Key: order-unique-001
 ```
 
 ## Request Body
@@ -39,13 +39,75 @@ Idempotency-Key: unique-order-key-001
 }
 ```
 
+## Field yang diterima
+
+| Field | Tipe | Wajib | Keterangan |
+|---|---|---:|---|
+| `order_type` | string | Opsional | `gamepass` atau `vip_server`. Default: `gamepass`. |
+| `roblox_username` | string | Ya | Username Roblox tujuan. |
+| `place_id` | integer | Ya | Place ID Roblox. |
+| `roblox_pass_id` | integer | Ya | Gamepass ID. Alias `gamepass_id` juga didukung. |
+| `payment_method` | string | Opsional | Default `invoice`. Sandbox hanya boleh `invoice`. |
+| `client_reference` | string | Opsional | Referensi dari bot/website kamu. |
+
+## Contoh Request
+
+```bash
+curl -X POST "https://leuwongrr.online/api/v1/me/orders" \
+  -H "Authorization: Bearer USER_API_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: order-test-001" \
+  --data '{
+    "order_type": "gamepass",
+    "roblox_username": "LeuwongUser",
+    "place_id": 123456789,
+    "roblox_pass_id": 987654321,
+    "payment_method": "invoice",
+    "client_reference": "bot-order-001"
+  }'
+```
+
+## Contoh Response
+
+```json
+{
+  "success": true,
+  "message": "Order berhasil dibuat.",
+  "data": {
+    "invoice": {
+      "invoice_code": "INV202605010001",
+      "type": "order",
+      "payment_status": "pending",
+      "amount": 348,
+      "formatted_amount": "Rp348",
+      "currency": "IDR",
+      "payment_method": "invoice",
+      "invoice_url": "https://leuwongrr.online/user/invoice/INV202605010001"
+    },
+    "environment": "sandbox",
+    "idempotent": false
+  }
+}
+```
+
 ## Keamanan
 
-User API tidak menerima field sensitif seperti `user_id`, `email`, `price`, `total_amount`, `status`, atau `paid_at`. Semua data penting dihitung oleh server LeuwongRR.
+User API tidak menerima field sensitif seperti `user_id`, `email`, `price`, `amount`, `total_amount`, `status`, `payment_status`, `paid_at`, `role`, `balance`, `order_id`, `invoice_id`, atau payload provider. Semua data penting dihitung oleh server LeuwongRR.
 
 ## Validasi
 
 Order tetap melewati validasi server LeuwongRR, termasuk validasi Roblox, gamepass/place, harga, diskon, payment method, invoice, dan ownership token user.
+
+## Idempotency-Key
+
+Gunakan header `Idempotency-Key` untuk mengurangi risiko double order saat bot melakukan retry.
+
+```http
+Idempotency-Key: user-bot-order-20260501-001
+```
+
+Jika key yang sama sudah pernah dipakai oleh akun yang sama, API dapat mengembalikan invoice lama dengan `idempotent: true`.
 
 ## Testing dari Bot
 
