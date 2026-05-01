@@ -24,6 +24,7 @@ Authorization: Bearer USER_API_TOKEN
 Accept: application/json
 Content-Type: application/json
 Idempotency-Key: order-unique-001
+X-Discord-User-ID: DISCORD_USER_ID_TERLINK
 ```
 
 ## Request Body
@@ -47,7 +48,7 @@ Idempotency-Key: order-unique-001
 | `roblox_username` | string | Ya | Username Roblox tujuan. |
 | `place_id` | integer | Ya | Place ID Roblox. |
 | `roblox_pass_id` | integer | Ya | Gamepass ID. Alias `gamepass_id` juga didukung. |
-| `payment_method` | string | Opsional | Default `invoice`. Sandbox hanya boleh `invoice`. |
+| `payment_method` | string | Opsional | Default `invoice`. Gunakan `balance` hanya untuk Discord bot yang akun Discord-nya sudah link ke akun web. Sandbox hanya boleh `invoice`. |
 | `client_reference` | string | Opsional | Referensi dari bot/website kamu. |
 
 ## Contoh Request
@@ -58,6 +59,7 @@ curl -X POST "https://leuwongrr.online/api/v1/me/orders" \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: order-test-001" \
+  -H "X-Discord-User-ID: DISCORD_USER_ID_TERLINK" \
   --data '{
     "order_type": "gamepass",
     "roblox_username": "LeuwongUser",
@@ -112,3 +114,26 @@ Jika key yang sama sudah pernah dipakai oleh akun yang sama, API dapat mengembal
 ## Testing dari Bot
 
 Bot cukup mengirim input user ke endpoint ini. Bot tidak perlu menghitung harga dan tidak boleh menentukan status order.
+
+
+## Pembayaran Saldo via Discord
+
+Untuk memakai saldo dari Discord bot, request harus memakai token API member dan Discord ID yang sudah terhubung ke akun web yang sama.
+
+```http
+Authorization: Bearer USER_API_TOKEN
+X-Discord-User-ID: DISCORD_USER_ID_TERLINK
+Idempotency-Key: discord-balance-order-001
+Content-Type: application/json
+Accept: application/json
+```
+
+Body wajib mengirim:
+
+```json
+{
+  "payment_method": "balance"
+}
+```
+
+Jika Discord belum terhubung ke akun web, API akan menolak dengan kode `DISCORD_LINK_REQUIRED`. Jika saldo tidak cukup, API akan menolak dengan kode `INSUFFICIENT_BALANCE`.
