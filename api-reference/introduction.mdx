@@ -1,1 +1,20 @@
+---
+title: API Reference
+description: Reference endpoint REST API v1 LeuwongRR untuk public safe endpoint dan User API.
+---
 
+# API Reference
+
+Reference ini hanya berisi endpoint yang aman untuk publik dan endpoint user-only berbasis User API Token.
+
+## Public safe endpoint
+
+Endpoint public safe tidak membutuhkan token dan hanya menampilkan data publik ringan seperti status API, katalog paket, metode pembayaran aktif, dan artikel.
+
+## User endpoint
+
+Endpoint `/me` wajib memakai User API Token. Data user, invoice, order, saldo, dan deposit selalu diambil dari akun pemilik token.
+
+<Warning>
+Jangan menyimpan User API Token di frontend JavaScript, HTML publik, URL query, atau repository publik. Gunakan backend/server/bot sebagai perantara.
+</Warning>
